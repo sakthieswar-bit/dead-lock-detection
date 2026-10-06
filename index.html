@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deadlock Detection & Prevention Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav id="nav">
+  <b class="logo">DeadlockSim</b>
+  <a href="#dashboard">Dashboard</a><a href="#input">Input</a><a href="#banker">Banker's Algorithm</a>
+  <a href="#detect">Deadlock Detection</a><a href="#viz">Visualization</a><a href="#steps">Step-by-Step</a><a href="#learn">Learn</a>
+</nav>
+<main>
+<section id="dashboard">
+  <header class="hero"><span class="label-pill">OS Laboratory</span><h1>Deadlock Detection &amp; Prevention Simulator</h1><p class="lead">Enter a resource-allocation state, run Banker's Algorithm, and see whether every process can still finish.</p></header>
+  <div class="cards">
+    <div class="card"><small>Processes</small><strong id="statN">0</strong></div>
+    <div class="card"><small>Resources</small><strong id="statM">0</strong></div>
+    <div class="card"><small>System status</small><strong id="statSys">Not run</strong></div>
+    <div class="card"><small>Safe / Unsafe</small><strong id="statSafe">-</strong></div>
+  </div>
+  <div class="bar">
+    <button class="primary" id="btnRun">Run Simulation</button>
+    <button id="btnStep">Run Step-by-Step</button>
+    <button id="btnSafe">Load Safe Example</button>
+    <button id="btnUnsafe">Load Unsafe Example</button>
+    <button class="danger" id="btnReset">Reset</button>
+  </div>
+</section>
+
+<section id="input">
+  <span class="label-pill">Setup</span>
+  <h2>Input</h2><p class="lead">Edit any value. Need is calculated for you.</p>
+  <div class="bar">
+    <label>Processes <input type="number" id="nProc" min="1" max="8" value="3"></label>
+    <label>Resource types <input type="number" id="nRes" min="1" max="6" value="3"></label>
+    <button id="btnGen">Generate Tables</button>
+  </div>
+  <div id="error" class="error" hidden></div>
+  <div class="grid">
+    <div class="card"><h3>Allocation</h3><div id="allocT"></div></div>
+    <div class="card"><h3>Maximum</h3><div id="maxT"></div></div>
+    <div class="card"><h3>Available</h3><div id="availT"></div></div>
+  </div>
+</section>
+
+<section id="banker">
+  <span class="label-pill">Algorithm</span>
+  <h2>Banker's Algorithm</h2><p class="lead">Safe or unsafe, with the order in which processes can finish.</p>
+  <div class="cards" id="results"><p class="muted">Run the simulation to see results.</p></div>
+  <div class="card"><h3>Need Matrix (Maximum − Allocation)</h3><div id="needT"></div></div>
+</section>
+
+<section id="detect">
+  <span class="label-pill">Analysis</span>
+  <h2>Deadlock Detection</h2><p class="lead">Which processes can complete and which are stuck waiting.</p>
+  <div class="card" id="detectOut"><p class="muted">Run the simulation to check for deadlock.</p></div>
+</section>
+
+<section id="viz">
+  <span class="label-pill">Graph</span>
+  <h2>Process–Resource Graph</h2><p class="lead">Who holds what, and who is waiting for what.</p>
+  <div class="card">
+    <div class="legend"><span class="k alloc"></span>Allocated (R → P) <span class="k req"></span>Requested (P → R) <span class="k avail"></span>Available units. Green node can finish, red node is blocked.</div>
+    <svg id="graph" viewBox="0 0 560 300"></svg>
+  </div>
+</section>
+
+<section id="steps">
+  <span class="label-pill">Walkthrough</span>
+  <h2>Step-by-Step</h2><p class="lead">Walk through each check the algorithm makes.</p>
+  <div class="bar">
+    <button id="btnPrev">Previous Step</button><button id="btnNext">Next Step</button><button id="btnAuto">Auto Play</button>
+  </div>
+  <div class="card" id="stepOut"><p class="muted">Click “Run Step-by-Step” to begin.</p></div>
+</section>
+
+<section id="learn">
+  <span class="label-pill">Concepts</span>
+  <h2>Learn</h2>
+  <div class="grid">
+    <div class="card"><h3>What is deadlock?</h3><p>Deadlock is when a group of processes wait forever, each holding a resource another one needs. None can move, so none ever finishes.</p></div>
+    <div class="card"><h3>Four necessary conditions</h3><ol><li><b>Mutual exclusion:</b> a resource is used by one process at a time.</li><li><b>Hold and wait:</b> a process holds resources while waiting for more.</li><li><b>No preemption:</b> resources cannot be taken away by force.</li><li><b>Circular wait:</b> P1 waits for P2, P2 for … Pn, Pn for P1.</li></ol></div>
+    <div class="card"><h3>Deadlock prevention</h3><p>Break at least one condition: make resources shareable (mutual exclusion), request everything at start (hold and wait), allow the OS to preempt resources (no preemption), or number resources and request in order (circular wait).</p></div>
+    <div class="card"><h3>Deadlock avoidance</h3><p>The OS grants a request only if the system stays in a <b>safe state</b>: an order exists in which every process can finish. An <b>unsafe state</b> does not always deadlock, but it can.</p></div>
+    <div class="card"><h3>Banker's Algorithm</h3><ol><li>Need = Max − Allocation.</li><li>Work = Available; all processes unfinished.</li><li>Find an unfinished process with Need ≤ Work.</li><li>Pretend it finishes: Work = Work + its Allocation.</li><li>Repeat. If all finish, the state is safe and the order is the safe sequence.</li></ol></div>
+    <div class="card"><h3>Deadlock detection</h3><p>Same idea, but on the current state: processes holding nothing can finish, and any process whose request fits in Work finishes and returns its resources. Processes left over are deadlocked.</p></div>
+  </div>
+</section>
+</main>
+<footer class="foot">
+  <div>
+    <b class="logo">DeadlockSim</b>
+    <p>Deadlock Detection &amp; Prevention Simulator</p>
+    <p class="muted">Operating Systems Project</p>
+    <p class="muted">Visualizing resource allocation, synchronization and deadlock avoidance.</p>
+  </div>
+  <nav class="foot-links" aria-label="Footer">
+    <h3>Explore</h3>
+    <a href="#dashboard">Dashboard</a><a href="#input">Input</a><a href="#banker">Banker's Algorithm</a>
+    <a href="#detect">Deadlock Detection</a><a href="#viz">Visualization</a><a href="#steps">Step-by-Step</a><a href="#learn">Learn</a>
+  </nav>
+</footer>
+<script src="script.js"></script>
+<script src="extra.js"></script>
+</body>
+</html>
